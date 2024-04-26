@@ -1,0 +1,2 @@
+# Log to shared mem buffer (use logread to read it)
+SYSLOGD_OPTS="-t -C8192"

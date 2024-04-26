@@ -1,0 +1,41 @@
+# Loopback
+auto lo
+iface lo inet loopback
+
+# WAN
+auto eth1
+iface eth1 inet dhcp
+
+# Default untagged LAN interface
+auto eth0
+iface eth0 inet static
+	address 192.168.1.1/24
+
+# Guest
+auto guest
+iface guest inet static
+	address 192.168.51.1/24
+	vlan-raw-device eth0
+	vlan_id 51
+
+# IOT
+auto iot
+iface iot inet static
+	address 192.168.107.1/24
+	vlan-raw-device eth0
+	vlan_id 107
+
+# Camera
+auto camera
+iface camera inet static
+	address 192.168.88.1/24
+	vlan-raw-device eth0
+	vlan_id 88
+
+# Example VPN interface
+auto wg0
+iface wg0 inet static
+	requires eth0
+	use wireguard
+	address 192.168.7.1/24
+	mtu 1420
