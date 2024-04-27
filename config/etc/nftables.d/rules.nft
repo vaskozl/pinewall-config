@@ -16,17 +16,18 @@ define IP_IRC  = 192.168.99.11
 
 define IP_SYNO = 192.168.1.108
 
-define IOT_WITH_EGRESS = {
-    192.168.107.30, # Washer-Dryer
-    192.168.107.31, # Dreame L10
-    192.168.107.32, # Samsung TV
-    192.168.107.33, # Bosch-Dishwasher
-}
-
 define SMART_SPEAKERS = {
     192.168.107.10, # Google Living
     192.168.107.11, # Google Bathroom
     192.168.107.12, # Lenovo Bedroom
+}
+
+define IOT_WITH_EGRESS = {
+    $SMART_SPEAKERS,
+    192.168.107.30, # Washer-Dryer
+    192.168.107.31, # Dreame L10
+    192.168.107.32, # Samsung TV
+    192.168.107.33, # Bosch-Dishwasher
 }
 
 table ip global {
@@ -58,12 +59,12 @@ table ip global {
 
         # allow loopback traffic, anything else jump to chain for further evaluation
         iifname vmap {
-            lo : accept,
-            $DEV_WORLD   : jump inbound_world,
+            lo           : accept,
             $DEV_PRIVATE : accept,
             $DEV_WG      : accept,
             $DEV_IOT     : jump inbound_guest,
             $DEV_GUEST   : jump inbound_guest,
+            $DEV_WORLD   : jump inbound_world,
         }
 
         # the rest is dropped by the default policy
@@ -94,7 +95,6 @@ table ip global {
 
         # IOT devices don't have internet by default but some need it
         ip saddr $IOT_WITH_EGRESS oifname $DEV_WORLD accept
-        ip saddr $SMART_SPEAKERS oifname $DEV_WORLD accept
 
         # the rest is dropped by the default policy
     }
