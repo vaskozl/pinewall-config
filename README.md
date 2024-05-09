@@ -17,6 +17,8 @@ docker build -t pinewall .
 docker create --name pinewall pinewall
 docker cp pinewall:/tmp/images/. .
 docker rm pinewall
+
+gunzip -c alpine-rpi-edge-aarch64.img.gz | sudo dd of=/dev/diskX bs=1m status=progress conv=fsync oflag=sync
 ```
 For other architectures set `profile_standard` and `arch` in mkimg.pinewall_rpi.sh
 
