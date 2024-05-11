@@ -8,6 +8,7 @@ define DEV_GUEST = guest
 define DEV_IOT = iot
 
 define NET_PRIVATE = 192.168.0.0/16
+define NET_PODCIDR = 10.244.0.0/16
 
 define IP_EING = 192.168.99.4
 define IP_MQTT = 192.168.99.9
@@ -91,6 +92,7 @@ table ip global {
 
         # Allow traffic to mosquitto from IOT
         iifname $DEV_IOT ip daddr $IP_MQTT accept
+        iifname $DEV_IOT ip daddr $NET_PODCIDR tcp dport 1883 accept
 
         # Smart speakers need to be able to speak to hass for TTS
         ip saddr $SMART_SPEAKERS ip daddr $IP_EING iifname $DEV_IOT accept
