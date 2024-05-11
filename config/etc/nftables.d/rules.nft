@@ -16,6 +16,8 @@ define IP_IRC  = 192.168.99.11
 
 define IP_SYNO = 192.168.1.108
 
+define IP_KAPI = 192.168.1.8
+
 define SMART_SPEAKERS = {
     192.168.107.10, # Google Living
     192.168.107.11, # Google Bathroom
@@ -104,13 +106,11 @@ table ip nat {
     chain prerouting {
         type nat hook prerouting priority 0;
         fib daddr type local dnat ip to meta l4proto . th dport map {
-            tcp . smtp  : $IP_MAIL,
-            tcp . http  : $IP_EING,
-            tcp . https : $IP_EING,
-            tcp . 7001  : $IP_IRC,
-            tcp . 16697 : $IP_IRC,
-            tcp . 16989 : $IP_SYNO,
-            udp . 16989 : $IP_SYNO,
+            tcp . smtp  : $IP_KAPI . 31025,
+            tcp . http  : $IP_KAPI . 31080,
+            tcp . https : $IP_KAPI . 31443,
+            tcp . 16989 : $IP_SYNO . 16989,
+            udp . 16989 : $IP_SYNO . 16989,
         }
     }
 
