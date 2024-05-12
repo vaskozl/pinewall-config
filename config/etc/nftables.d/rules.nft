@@ -79,12 +79,6 @@ table ip global {
         iifname $DEV_PRIVATE accept
         iifname $DEV_WG accept
 
-        # Allow traffic from established and related packets, drop invalid
-        ct state vmap { established : accept, related : accept, invalid : drop }
-
-        # Accept everything that came through destination nat
-        ct status dnat accept
-
         # Guest is only allowed internet accesss
         iifname $DEV_GUEST oifname $DEV_WORLD accept
 
@@ -99,6 +93,12 @@ table ip global {
 
         # IOT devices don't have internet by default but some need it
         ip saddr $IOT_WITH_EGRESS oifname $DEV_WORLD accept
+
+        # Allow traffic from established and related packets, drop invalid
+        ct state vmap { established : accept, related : accept, invalid : drop }
+
+        # Accept everything that came through destination nat
+        ct status dnat accept
 
         # the rest is dropped by the default policy
     }
