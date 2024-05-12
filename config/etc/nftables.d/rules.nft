@@ -91,11 +91,11 @@ table ip global {
         # Allow traffic to mosquitto from IOT
         iifname $DEV_IOT ip daddr $NET_PODCIDR tcp dport 1883 accept
 
-        # ALlow TVs access to media
-        iifname $DEV_IOT ip saddr $TVS daddr $NET_PODCIDR tcp dport { http, https } accept
+        # Allow TVs access to media
+        iifname $DEV_IOT ip saddr $TVS ip daddr $NET_PODCIDR tcp dport { http, https } accept
 
         # Smart speakers need to be able to speak to hass for TTS
-        iifname $DEV_IOT ip saddr $SMART_SPEAKERS daddr $NET_PODCIDR tcp dport { http, https } accept
+        iifname $DEV_IOT ip saddr $SMART_SPEAKERS ip daddr $NET_PODCIDR tcp dport { http, https } accept
 
         # IOT devices don't have internet by default but some need it
         ip saddr $IOT_WITH_EGRESS oifname $DEV_WORLD accept
