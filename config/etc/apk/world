@@ -5,6 +5,7 @@ conntrack-tools
 dbus
 dnsmasq
 ethtool
+haproxy
 htop
 iftop
 ifupdown-ng-wireguard
