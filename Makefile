@@ -27,5 +27,7 @@ clean:
 sync:
 	$(eval FILES := $(shell find config -type f))
 	@for file in $(FILES); do \
-		scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -r $(HOSTNAME):$${file#config} ./$$file; \
+		if [ "$$file" != "config/etc/wireguard/wg0.conf" ]; then \
+			scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -r $(HOSTNAME):$${file#config} ./$$file; \
+		fi; \
 	done
