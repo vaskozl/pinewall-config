@@ -108,11 +108,17 @@ table ip nat {
     chain prerouting {
         type nat hook prerouting priority 0;
         fib daddr type local dnat ip to meta l4proto . th dport map {
+            # maddy
             tcp . smtp  : $IP_KAPI . 31025,
+            # haproxy ingress
             tcp . http  : $IP_KAPI . 31080,
             tcp . https : $IP_KAPI . 31443,
+            # qbittorrent
             tcp . 16989 : $IP_SYNO . 16989,
             udp . 16989 : $IP_SYNO . 16989,
+            # inspircd
+            udp . 16697 : $IP_SYNO . 31697,
+            udp . 7001 : $IP_SYNO . 31007,
         }
     }
 

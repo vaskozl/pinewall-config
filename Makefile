@@ -14,7 +14,6 @@ build:
 # Flash target
 .PHONY: flash
 flash:
-	docker build -t $(HOSTNAME) .
 	sudo diskutil unmountDisk $(DEVICE)
 	gunzip -c $(IMAGE_FILE) | sudo dd of=$(DEVICE) bs=1m status=progress conv=fsync oflag=sync
 
