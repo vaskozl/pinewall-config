@@ -117,8 +117,8 @@ table ip nat {
             tcp . 16989 : $IP_SYNO . 16989,
             udp . 16989 : $IP_SYNO . 16989,
             # inspircd
-            udp . 7001  : $IP_SYNO . 31007,
-            udp . 16697 : $IP_SYNO . 31697,
+            tcp . 16697 : $IP_KAPI . 31697,
+            tcp . 7001  : $IP_KAPI . 31007,
         }
     }
 
