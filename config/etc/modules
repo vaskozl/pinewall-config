@@ -1,3 +1,4 @@
 af_packet
+nf_conntrack
 ipv6
 wireguard
