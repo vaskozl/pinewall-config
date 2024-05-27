@@ -17,6 +17,7 @@ nftables
 nload
 openssh
 openssl
+prometheus-node-exporter
 raspberrypi
 rng-tools
 sudo
