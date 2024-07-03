@@ -17,6 +17,10 @@ flash:
 	sudo diskutil unmountDisk $(DEVICE)
 	gunzip -c $(IMAGE_FILE) | sudo dd of=$(DEVICE) bs=1m status=progress conv=fsync oflag=sync
 
+.PHONY: liveflash
+liveflash:
+	cat $(IMAGE_FILE) | ssh pinewall 'gunzip -c | sudo dd of=/dev/mmcblk0 bs=1048576 conv=fsync'
+
 # Clean target
 .PHONY: clean
 clean:
