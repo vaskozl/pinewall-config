@@ -113,6 +113,8 @@ table ip nat {
             # haproxy ingress
             tcp . http  : $IP_KAPI . 31080,
             tcp . https : $IP_KAPI . 31443,
+            udp . http  : $IP_KAPI . 31080,
+            udp . https : $IP_KAPI . 31443,
             # qbittorrent
             tcp . 16989 : $IP_SYNO . 16989,
             udp . 16989 : $IP_SYNO . 16989,
