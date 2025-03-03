@@ -1,3 +1,4 @@
 secrets.env
 *.img.gz
 *.iso
+config/var/lib/tailscale
