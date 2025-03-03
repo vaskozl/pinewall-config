@@ -21,5 +21,6 @@ prometheus-node-exporter
 raspberrypi
 rng-tools
 sudo
+tailscale
 tcpdump
 ulogd
