@@ -10,6 +10,7 @@ define DEV_TAIL = tailscale0
 
 define NET_PRIVATE = 192.168.0.0/16
 define NET_PODCIDR = 10.244.0.0/16
+define NET_CGNAT = 100.64.0.0/10
 
 define IP_SYNO = 192.168.1.108
 define IP_KAPI = 192.168.1.8
@@ -85,7 +86,7 @@ table ip global {
         iifname $DEV_GUEST oifname $DEV_WORLD accept
 
         # Allow traffic to mosquitto from IOT
-        iifname $DEV_IOT ip daddr $NET_PODCIDR tcp dport 1883 accept
+        iifname $DEV_IOT ip daddr $NET_CGNAT tcp dport 1883 accept
 
         # Allow TVs access to media
         iifname $DEV_IOT ip saddr $TVS ip daddr $NET_PODCIDR tcp dport { http, https } accept
