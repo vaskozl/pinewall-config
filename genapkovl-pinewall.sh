@@ -57,7 +57,7 @@ rc_add urandom boot
 # Most of our services want to go here in the default runlevel
 #rc_add acpid default
 rc_add avahi-daemon default
-rc_add bird default  # BGP
+#rc_add bird default  # BGP
 rc_add ntpd default
 rc_add crond default  # Previously disabled but I've re-enabled it since logrotate requires it
 rc_add sshd default
