@@ -1,4 +1,4 @@
-FROM docker.io/library/alpine:edge as builder
+FROM docker.io/library/alpine:3.21 as builder
 
 # Run an APK update so we have a recent cache ready in the Docker image
 # (if we don't do this then the "apk fetch" stages of the build that fetch
@@ -44,7 +44,7 @@ WORKDIR /tmp/abuild
 
 # Clone the aports repo for our specific branch
 # If building from Alpine Edge, we need to use the master branch
-RUN git clone --depth 1 --branch master https://gitlab.alpinelinux.org/alpine/aports.git
+RUN git clone --depth 1 --branch 3.21-stable https://gitlab.alpinelinux.org/alpine/aports.git
 
 # Add our custom profile into the abuild scripts directory
 COPY mkimg.pinewall_rpi.sh /tmp/abuild/aports/scripts/
@@ -62,11 +62,11 @@ COPY secrets.env /tmp/
 
 # Build our image
 RUN ./mkimage.sh \
-  --tag edge \
+  --tag 3.21 \
   --outdir /tmp/images \
   --workdir /tmp/cache \
-  --repository https://uk.alpinelinux.org/alpine/edge/main \
-  --repository https://uk.alpinelinux.org/alpine/edge/community \
+  --repository https://uk.alpinelinux.org/alpine/v3.21/main \
+  --repository https://uk.alpinelinux.org/alpine/v3.21/community \
   --profile pinewall_rpi
 
 # List the contents of our image directory
