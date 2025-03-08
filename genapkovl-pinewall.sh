@@ -66,7 +66,6 @@ rc_add irqbalance default
 rc_add ulogd default
 rc_add dnsmasq default
 rc_add node-exporter default
-rc_add tailscale default
 
 rc_add mount-ro shutdown
 rc_add killprocs shutdown

@@ -6,11 +6,9 @@ define DEV_WORLD = eth1
 define DEV_WG = wg0
 define DEV_GUEST = guest
 define DEV_IOT = iot
-define DEV_TAIL = tailscale0
 
 define NET_PRIVATE = 192.168.0.0/16
 define NET_PODCIDR = 10.244.0.0/16
-define NET_CGNAT = 100.64.0.0/10
 
 define IP_SYNO = 192.168.1.108
 define IP_KAPI = 192.168.1.8
@@ -40,7 +38,6 @@ table ip global {
 
         ip protocol . th dport vmap {
             udp . 51820 : accept, # wireguard
-            udp . 41641 : accept, # tailscale
         }
     }
 
@@ -66,7 +63,6 @@ table ip global {
             lo           : accept,
             $DEV_PRIVATE : accept,
             $DEV_WG      : accept,
-            $DEV_TAIL    : accept,
             $DEV_IOT     : jump inbound_guest,
             $DEV_GUEST   : jump inbound_guest,
             $DEV_WORLD   : jump inbound_world,
@@ -87,7 +83,7 @@ table ip global {
         iifname $DEV_GUEST oifname $DEV_WORLD accept
 
         # Allow traffic to mosquitto from IOT
-        iifname $DEV_IOT ip daddr $NET_CGNAT tcp dport 1883 accept
+        iifname $DEV_IOT ip daddr $NET_PODCIDR tcp dport 1883 accept
 
         # Allow TVs access to media
         iifname $DEV_IOT ip saddr $TVS ip daddr $NET_PODCIDR tcp dport { http, https } accept
@@ -113,12 +109,12 @@ table ip nat {
         type nat hook prerouting priority 0;
         fib daddr type local dnat ip to meta l4proto . th dport map {
             # maddy
-            tcp . smtp  : 100.84.91.11 . smtp,
+            tcp . smtp  : $IP_KAPI . smtp,
             # haproxy ingress
-            tcp . http  : 100.81.117.4 . http,
-            tcp . https : 100.81.117.4 . https,
-            udp . http  : 100.81.117.4 . http,
-            udp . https : 100.81.117.4 . https,
+            tcp . http  : $IP_KAPI . http,
+            tcp . https : $IP_KAPI . https,
+            udp . http  : $IP_KAPI . http,
+            udp . https : $IP_KAPI . https,
             # qbittorrent
             tcp . 16989 : $IP_SYNO . 16989,
             udp . 16989 : $IP_SYNO . 16989,
@@ -130,7 +126,6 @@ table ip nat {
 
         # masquerade outgoing connections
         ip saddr $NET_PRIVATE oifname $DEV_WORLD masquerade
-        oifname $DEV_TAIL masquerade
         # masquerade hairpinned connections
         ip saddr $NET_PRIVATE ip daddr $NET_PRIVATE ct status dnat masquerade
     }
