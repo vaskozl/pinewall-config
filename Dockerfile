@@ -1,4 +1,4 @@
-FROM docker.io/library/alpine:3.21 as builder
+FROM docker.io/library/alpine:3.21 AS builder
 
 # Run an APK update so we have a recent cache ready in the Docker image
 # (if we don't do this then the "apk fetch" stages of the build that fetch
