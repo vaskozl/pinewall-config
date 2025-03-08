@@ -1,6 +1,6 @@
 # Define variables
 HOSTNAME = pinewall
-IMAGE_FILE = alpine-rpi-edge-aarch64.img.gz
+IMAGE_FILE = alpine-rpi-3.21-aarch64.img.gz
 DEVICE = /dev/disk6
 
 # Build target
