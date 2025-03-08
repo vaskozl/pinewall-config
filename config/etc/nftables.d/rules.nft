@@ -40,6 +40,7 @@ table ip global {
 
         ip protocol . th dport vmap {
             udp . 51820 : accept, # wireguard
+            udp . 41641 : accept, # tailscale
         }
     }
 
