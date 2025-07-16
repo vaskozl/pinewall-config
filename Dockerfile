@@ -1,4 +1,4 @@
-FROM docker.io/library/alpine:3.21 AS builder
+FROM docker.io/library/alpine:edge AS builder
 
 # Run an APK update so we have a recent cache ready in the Docker image
 # (if we don't do this then the "apk fetch" stages of the build that fetch
@@ -20,7 +20,10 @@ RUN apk add \
   tzdata \
   xorriso \
   envsubst \
+  bash \
   doas
+
+RUN wget -O /etc/apk/keys/wolfi-signing.rsa.pub https://packages.wolfi.dev/os/wolfi-signing.rsa.pub
 
 # Add unprivileged builder user and change ownership of build directory
 # so we can launch the mkimage process unprivileged
@@ -42,13 +45,13 @@ RUN abuild-keygen -a -n
 RUN mkdir /tmp/abuild
 WORKDIR /tmp/abuild
 
-# Clone the aports repo for our specific branch
-# If building from Alpine Edge, we need to use the master branch
-RUN git clone --depth 1 --branch 3.21-stable https://gitlab.alpinelinux.org/alpine/aports.git
+COPY aports /tmp/abuild/aports
 
 # Add our custom profile into the abuild scripts directory
 COPY mkimg.pinewall_rpi.sh /tmp/abuild/aports/scripts/
 COPY genapkovl-pinewall.sh /tmp/abuild/aports/scripts/
+COPY update-kernel /usr/sbin/update-kernel
+COPY init /tmp/custom-init
 
 # Enter the script directory
 WORKDIR /tmp/abuild/aports/scripts
@@ -61,12 +64,13 @@ COPY config/. /tmp/config
 COPY secrets.env /tmp/
 
 # Build our image
-RUN ./mkimage.sh \
-  --tag 3.21 \
+RUN bash -x ./mkimage.sh \
+  --tag edge \
   --outdir /tmp/images \
   --workdir /tmp/cache \
-  --repository https://uk.alpinelinux.org/alpine/v3.21/main \
-  --repository https://uk.alpinelinux.org/alpine/v3.21/community \
+  --repository https://uk.alpinelinux.org/alpine/edge/main \
+  --repository https://uk.alpinelinux.org/alpine/edge/community \
+  --repository https://packages.wolfi.dev/os \
   --profile pinewall_rpi
 
 # List the contents of our image directory

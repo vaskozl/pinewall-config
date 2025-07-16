@@ -1,0 +1,11 @@
+[Unit]
+Description=Load modloop on boot
+Before=network-pre.target
+
+[Service]
+ExecStart=/home/pinewall/bin/load-modloop
+Type=oneshot
+RemainAfterExit=true
+
+[Install]
+WantedBy=multi-user.target

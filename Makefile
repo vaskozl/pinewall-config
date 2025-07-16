@@ -1,12 +1,12 @@
 # Define variables
 HOSTNAME = pinewall
-IMAGE_FILE = alpine-rpi-3.21-aarch64.img.gz
+IMAGE_FILE = alpine-rpi-edge-aarch64.img.gz
 DEVICE = /dev/disk6
 
 # Build target
 .PHONY: build
 build:
-	docker build --no-cache -t $(HOSTNAME) .
+	docker build --progress=plain --no-cache -t $(HOSTNAME) .
 	docker create --name $(HOSTNAME) $(HOSTNAME)
 	docker cp $(HOSTNAME):/tmp/images/. .
 	docker rm $(HOSTNAME)

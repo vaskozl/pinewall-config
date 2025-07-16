@@ -1,7 +1,7 @@
 profile_pinewall_rpi() {
   # Source the env vars from the "rpi" profile below (see mkimg.arm.sh)
-  profile_rpiimg
-  # profile_standard
+  #profile_rpiimg
+  profile_virt
   apkovl="genapkovl-pinewall.sh"
 
   # Force aarch64
