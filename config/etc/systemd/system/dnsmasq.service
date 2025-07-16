@@ -9,7 +9,7 @@ Wants=nss-lookup.target
 Type=simple
 BusName=uk.org.thekelleys.dnsmasq
 ExecStartPre=/usr/bin/dnsmasq --test
-ExecStart=/usr/bin/dnsmasq -k --user=nobody --log-facility=- --pid-file
+ExecStart=/usr/bin/dnsmasq -k --user=dnsmasq --log-facility=- --pid-file
 ExecReload=/bin/kill -HUP $MAINPID
 Restart=on-failure
 PrivateDevices=true

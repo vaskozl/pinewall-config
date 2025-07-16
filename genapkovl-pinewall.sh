@@ -13,16 +13,16 @@ chown -R root:root "$tmp"
 chown -R 5000:500 "$tmp"/home
 
 
+for user in iperf avahi bird dnsmasq;do
+  addgroup -S $user 2>/dev/null
+  adduser -S -D -H -h /dev/null -s /sbin/nologin -G $user -g $user $user 2>/dev/null
+done
+
 # Seed our custom users based on the user config files
 # in the running container
 cp /etc/group "$tmp"/etc/
 cp /etc/passwd "$tmp"/etc/
 cp /etc/shadow "$tmp"/etc/
-
-# Add a new iperf user and group without a password
-echo "iperf:x:520:" >> "$tmp"/etc/group
-echo "iperf:x:520:520:iperf user:/home/iperf:/sbin/nologin" >> "$tmp"/etc/passwd
-echo "iperf:!::0:::::" >> "$tmp"/etc/shadow
 
 # Add a pinewall user with default password of "pinewall"
 echo "pinewall:x:5000:" >> "$tmp"/etc/group
