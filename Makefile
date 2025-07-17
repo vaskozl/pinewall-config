@@ -32,7 +32,7 @@ clean:
 sync:
 	$(eval FILES := $(shell find config -type f))
 	@for file in $(FILES); do \
-		if [ "$$file" != "config/etc/wireguard/wg0.conf" ]; then \
+		if [ "$$file" != "config/etc/systemd/network/30-wireguard.netdev" ]; then \
 			scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -r $(HOSTNAME):$${file#config} ./$$file; \
 		fi; \
 	done
