@@ -1,0 +1,5 @@
+#!/bin/sh
+RELEASE="$(curl -sSL https://dl.k8s.io/release/stable.txt)"
+sudo curl -L --remote-name-all https://dl.k8s.io/release/${RELEASE}/bin/linux/arm64/kubeadm
+chmod +x kubeadm
+./kubeadm init --ignore-preflight-errors=NumCPU,FileExisting-losetup,SystemVerification,Port-10250,FileAvailable--etc-kubernetes-manifests-kube-apiserver.yaml,FileAvailable--etc-kubernetes-manifests-kube-controller-manager.yaml,FileAvailable--etc-kubernetes-manifests-kube-scheduler.yaml,FileAvailable--etc-kubernetes-manifests-etcd.yaml

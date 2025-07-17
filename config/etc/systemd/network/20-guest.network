@@ -1,5 +1,0 @@
-[Match]
-Name=guest
-
-[Network]
-Address=192.168.51.1/24
