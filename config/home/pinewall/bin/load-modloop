@@ -4,4 +4,4 @@ mkdir -p /.modloop
 mount /media/*/boot/modloop-* -o loop,ro /.modloop
 ln -s /.modloop/modules /lib/modules
 depmod
-modprobe r8152
+modprobe r8152 || true
