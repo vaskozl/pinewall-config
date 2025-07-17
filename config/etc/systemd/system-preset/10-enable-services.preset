@@ -4,4 +4,5 @@ enable bird.service
 enable dnsmasq.service
 enable load-modloop.service
 enable nftables.service
+enable node-exporter.service
 enable sshd.service
