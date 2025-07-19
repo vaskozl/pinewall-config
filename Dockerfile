@@ -22,6 +22,7 @@ RUN apk add \
   envsubst \
   bash \
   parted \
+  e2fsprogs \
   doas
 
 RUN wget -O /etc/apk/keys/wolfi-signing.rsa.pub https://packages.wolfi.dev/os/wolfi-signing.rsa.pub

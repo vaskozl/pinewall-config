@@ -51,7 +51,7 @@ profile_rpi() {
 	grub_mod=
 }
 
-create_image_imggz_old() {
+create_image_imggz() {
 	sync "$DESTDIR"
 	local image_size=$(du -L -k -s "$DESTDIR" | awk '{print $1 + 8192}' )
 	local imgfile="${OUTDIR}/${output_filename%.gz}"
@@ -62,13 +62,12 @@ create_image_imggz_old() {
 	pigz -v -f -9 "$imgfile" || gzip -f -9 "$imgfile"
 }
 
-create_image_imggz() {
+create_image_imggz_new() {
     sync "$DESTDIR"
 
     # Calculate the size of the boot partition dynamically
 	local boot_size=$(du -L -k -s "$DESTDIR" | awk '{print int($1 / 1024 + 0.5) + 8}')
-    local ext4_size=128  # Size of the ext4 partition in MB (adjust as needed)
-    local image_size=$((boot_size + ext4_size + 8))  # Total size with some buffer
+    local image_size=$((boot_size + ext4_size))  # Total size with some buffer
 
     local imgfile="${OUTDIR}/${output_filename%.gz}"
 
@@ -76,23 +75,21 @@ create_image_imggz() {
     dd if=/dev/zero of="$imgfile" bs=1M count=$image_size
 
 	# Create partitions
-	parted "$imgfile" --script mklabel msdos
-	parted "$imgfile" --script mkpart primary fat32 1MiB ${boot_size}MiB
-	parted "$imgfile" --script mkpart primary ext4 $((boot_size + 1))MiB 100%
+	parted --script "$imgfile" \
+		mklabel msdos \
+		mkpart primary fat32 1MiB ${boot_size}MiB \
+		set 1 boot on \
+		set 1 lba on
 
 	# Format the partitions
 	# Calculate offsets for mkfs
 	boot_offset=$((1 * 2048))  # 1MiB offset
-	ext4_offset=$(((boot_size + 1) * 2048))  # Start after boot partition
 
 	# Format the boot partition
-	mkfs.vfat -F 32 -n BOOT -C "$imgfile" $boot_offset
-
-	# Format the ext4 partition
-	mkfs.ext4 -F -L ROOT "$imgfile" $ext4_offset
+	mkfs.vfat -F 32 -n BOOT "$imgfile" --offset $boot_offset
 
 	# Copy files to the boot partition
-	mcopy -s -i "$imgfile@@$boot_offset" "$DESTDIR"/* "$DESTDIR"/.alpine-release ::
+	mcopy -s -i "$imgfile@@1M" "$DESTDIR"/* "$DESTDIR"/.alpine-release ::
 
     # Compress the image
     echo "Compressing $imgfile..."
