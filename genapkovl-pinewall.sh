@@ -13,7 +13,7 @@ chown -R root:root "$tmp"
 chown -R 5000:500 "$tmp"/home
 
 
-for user in iperf avahi bird dnsmasq blocky;do
+for user in iperf avahi bird dnsmasq;do
   addgroup -S $user 2>/dev/null
   adduser -S -D -H -h /dev/null -s /sbin/nologin -G $user -g $user $user 2>/dev/null
 done
