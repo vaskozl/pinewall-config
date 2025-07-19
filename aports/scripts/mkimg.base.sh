@@ -330,7 +330,7 @@ create_image_targz() {
 
 profile_base() {
 	kernel_flavors="lts"
-	initfs_cmdline="modules=loop,squashfs,sd-mod,usb-storage quiet"
+	initfs_cmdline="modules=loop,squashfs,sd-mod,usb-storage"
 	initfs_features="ata base bootchart cdrom ext4 mmc nvme raid scsi squashfs usb virtio"
 	modloop_sign=yes
 	grub_mod="all_video disk part_gpt part_msdos linux normal configfile search search_label efi_gop fat iso9660 cat echo ls test true help gzio"

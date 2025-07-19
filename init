@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/sh -x
 # initramfs init
 
 # this is the init script version
@@ -974,7 +974,7 @@ elif [ -f "$ROOT"/etc/fstab ]; then
 fi
 
 # hack so we get openrc
-pkgs="$pkgs alpine-base"
+#pkgs="$pkgs alpine-base"
 
 # copy keys so apk finds them. apk looks for stuff relative --root
 mkdir -p $sysroot/etc/apk/keys/

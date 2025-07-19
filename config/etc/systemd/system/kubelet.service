@@ -6,8 +6,7 @@ After=containerd.service crio.service docker.service
 ConfigurationDirectory=kubernetes
 CPUAccounting=true
 IPAccounting=true
-EnvironmentFile=-/etc/kubernetes/kubelet.env
-ExecStart=/usr/bin/kubelet --pod-manifest-path=/etc/kubernetes/manifests $KUBELET_ARGS
+ExecStart=/usr/bin/kubelet-1.33 --config=/var/lib/kubelet/config.yaml --kubeconfig=/etc/kubernetes/kubelet.conf
 KillMode=process
 MemoryAccounting=true
 StartLimitInterval=0

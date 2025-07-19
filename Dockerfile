@@ -21,6 +21,7 @@ RUN apk add \
   xorriso \
   envsubst \
   bash \
+  parted \
   doas
 
 RUN wget -O /etc/apk/keys/wolfi-signing.rsa.pub https://packages.wolfi.dev/os/wolfi-signing.rsa.pub

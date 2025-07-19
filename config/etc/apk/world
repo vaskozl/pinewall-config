@@ -26,8 +26,8 @@ udev
 umount
 wget
 
-kubelet-1.33-default
-kubectl-1.33-default
+kubelet-1.33
+kubectl-default
 containerd
 containerd-service
 nfs-utils
