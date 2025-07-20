@@ -1,5 +1,6 @@
 disable systemd-resolved.service
 enable load-modloop.service
 enable sshd.service
+enable haproxy.service
 enable kubelet.service
 enable containerd.service
