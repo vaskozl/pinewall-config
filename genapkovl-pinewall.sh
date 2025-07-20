@@ -26,7 +26,7 @@ cp /etc/shadow "$tmp"/etc/
 
 # Add a pinewall user with default password of "pinewall"
 echo "pinewall:x:5000:" >> "$tmp"/etc/group
-echo "pinewall:x:5000:5000:Pinewall MGMT user:/home/pinewall:/bin/ash" >> "$tmp"/etc/passwd
+echo "pinewall:x:5000:5000:Pinewall MGMT user:/home/pinewall:/bin/bash" >> "$tmp"/etc/passwd
 
 . /tmp/secrets.env
 echo "$SHADOW_USER" >> "$tmp"/etc/shadow
