@@ -1,4 +1,3 @@
-disable systemd-resolved.service
 enable load-modloop.service
 enable sshd.service
 enable kubelet.service
