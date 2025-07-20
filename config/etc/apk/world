@@ -3,7 +3,6 @@ bash
 busybox
 conntrack-tools
 dbus
-haproxy
 htop
 nftables
 openssh
@@ -22,7 +21,6 @@ kubectl-default
 containerd
 containerd-service
 nfs-utils
-nerdctl
 flannel-cni-plugin-compat
 cni-plugins-bridge-compat
 cni-plugins-bandwidth-compat
@@ -42,4 +40,3 @@ cni-plugins-tap-compat
 cni-plugins-tuning-compat
 cni-plugins-vrf-compat
 cni-plugins-vlan-compat
-curl
