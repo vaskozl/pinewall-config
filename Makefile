@@ -19,7 +19,7 @@ flash:
 
 .PHONY: liveflash
 liveflash:
-	cat $(IMAGE_FILE) | ssh pinewall 'gunzip -c | sudo dd of=/dev/mmcblk0 bs=1048576 conv=fsync'
+	cat $(IMAGE_FILE) | ssh pinewall@pi4 'gunzip -c | sudo dd of=/dev/mmcblk0 bs=1048576 conv=fsync'
 
 # Clean target
 .PHONY: clean

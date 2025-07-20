@@ -1,2 +1,2 @@
-#/dev/mmcblk0p2    /var/lib    ext4    defaults    0 2
-#/var/lib/etc-kubernetes  /etc/kubernetes  none  bind  0  0
+/dev/sda    /var/lib    ext4    defaults    0 2
+/var/lib/etc-kubernetes  /etc/kubernetes  none  bind  0  0

@@ -45,7 +45,7 @@ profile_rpi() {
 	image_ext="tar.gz"
 	arch="aarch64 armhf armv7"
 	kernel_flavors="rpi"
-	kernel_cmdline="console=tty1 net.ifnames=0"
+	kernel_cmdline="console=tty1 net.ifnames=0 cgroup_enable=memory"
 	initfs_features="base squashfs mmc usb kms dhcp https"
 	hostname="rpi"
 	grub_mod=
