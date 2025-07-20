@@ -1,3 +1,4 @@
+enable irq-affinity.service
 enable load-modloop.service
 enable sshd.service
 enable kubelet.service
