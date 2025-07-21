@@ -4,3 +4,4 @@ Name=eth0
 [Network]
 DHCP=yes
 UseHostname=yes
+UseDomains=yes
