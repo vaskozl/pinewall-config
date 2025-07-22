@@ -1,12 +1,12 @@
 # Define variables
-HOSTNAME = pinewall
-IMAGE_FILE = alpine-rpi-edge-aarch64.img.gz
-DEVICE = /dev/disk5
+HOSTNAME := $(shell cat ./config/etc/hostname)
+IMAGE_FILE := mmcblk0-$(HOSTNAME).img.gz
+DEVICE = /dev/disk6
 
 # Build target
 .PHONY: build
 build:
-	docker build --progress=plain --no-cache -t $(HOSTNAME) .
+	docker build --progress=plain -t $(HOSTNAME) .
 	docker create --name $(HOSTNAME) $(HOSTNAME)
 	docker cp $(HOSTNAME):/tmp/images/. .
 	docker rm $(HOSTNAME)
@@ -19,7 +19,7 @@ flash:
 
 .PHONY: liveflash
 liveflash:
-	cat $(IMAGE_FILE) | ssh pinewall@pi4 'gunzip -c | sudo dd of=/dev/mmcblk0 bs=1048576 conv=fsync'
+	cat $(IMAGE_FILE) | ssh pinewall@$(HOSTNAME) 'gunzip -c | sudo dd of=/dev/mmcblk0 bs=1048576 conv=fsync'
 
 # Clean target
 .PHONY: clean

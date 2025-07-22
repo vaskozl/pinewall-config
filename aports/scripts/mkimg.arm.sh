@@ -62,40 +62,6 @@ create_image_imggz() {
 	pigz -v -f -9 "$imgfile" || gzip -f -9 "$imgfile"
 }
 
-create_image_imggz_new() {
-    sync "$DESTDIR"
-
-    # Calculate the size of the boot partition dynamically
-	local boot_size=$(du -L -k -s "$DESTDIR" | awk '{print int($1 / 1024 + 0.5) + 8}')
-    local image_size=$((boot_size + ext4_size))  # Total size with some buffer
-
-    local imgfile="${OUTDIR}/${output_filename%.gz}"
-
-    # Create a raw image file
-    dd if=/dev/zero of="$imgfile" bs=1M count=$image_size
-
-	# Create partitions
-	parted --script "$imgfile" \
-		mklabel msdos \
-		mkpart primary fat32 1MiB ${boot_size}MiB \
-		set 1 boot on \
-		set 1 lba on
-
-	# Format the partitions
-	# Calculate offsets for mkfs
-	boot_offset=$((1 * 2048))  # 1MiB offset
-
-	# Format the boot partition
-	mkfs.vfat -F 32 -n BOOT "$imgfile" --offset $boot_offset
-
-	# Copy files to the boot partition
-	mcopy -s -i "$imgfile@@1M" "$DESTDIR"/* "$DESTDIR"/.alpine-release ::
-
-    # Compress the image
-    echo "Compressing $imgfile..."
-    pigz -v -f -9 "$imgfile" || gzip -f -9 "$imgfile"
-}
-
 profile_rpiimg() {
 	profile_rpi
 	title="Raspberry Pi Disk Image"

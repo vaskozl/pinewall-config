@@ -51,7 +51,6 @@ COPY aports /tmp/abuild/aports
 
 # Add our custom profile into the abuild scripts directory
 COPY mkimg.pinewall_rpi.sh /tmp/abuild/aports/scripts/
-COPY genapkovl-pinewall.sh /tmp/abuild/aports/scripts/
 COPY update-kernel /usr/sbin/update-kernel
 COPY init /tmp/custom-init
 
@@ -62,7 +61,8 @@ WORKDIR /tmp/abuild/aports/scripts
 RUN mkdir /tmp/images
 
 # Add in all our configs
-COPY config/. /tmp/config
+RUN mkdir -p /tmp/config/etc/apk
+COPY config/etc/apk/world /tmp/config/etc/apk/world
 COPY secrets.env /tmp/
 
 # Build our image
@@ -73,7 +73,36 @@ RUN bash -x ./mkimage.sh \
   --repository https://uk.alpinelinux.org/alpine/edge/main \
   --repository https://uk.alpinelinux.org/alpine/edge/community \
   --repository https://packages.wolfi.dev/os \
-  --profile pinewall_rpi
+  --profile pinewall_rpi && \
+  mkdir -p /tmp/pinewall && \
+  doas tar xvf /tmp/images/alpine-*tar.gz --no-same-owner -C /tmp/pinewall && \
+  rm /tmp/images/alpine-*.tar.gz && rm -rf /tmp/cache
+
+USER root
+
+COPY config/. /tmp/config
+
+COPY genapkovl-pinewall.sh /tmp/abuild/aports/scripts/
+RUN cd /tmp/pinewall && \
+  sh -x /tmp/abuild/aports/scripts/genapkovl-pinewall.sh
+
+RUN	export DESTDIR=/tmp/pinewall && \
+    export OUTDIR=/tmp/images && \
+    output_filename="mmcblk0-$(cat /tmp/config/etc/hostname).img.gz" && \
+    sync "$DESTDIR" && \
+    boot_size=$(du -L -k -s "$DESTDIR" | awk '{print $1 + 8192}' ) && \
+    ext4_mb=100 && \
+    imgfile="${OUTDIR}/${output_filename%.gz}" && \
+    dd if=/dev/zero of="$imgfile" bs=1M count=$(( $boot_size / 1024 + $ext4_mb )) && \
+    parted "$imgfile" --script -- \
+      mklabel msdos \
+      mkpart primary fat32 1MiB ${boot_size}KiB \
+      set 1 boot on \
+      mkpart primary ext4 ${boot_size}KiB 100% && \
+    mkfs.vfat -F 32 -n BOOT "$imgfile" --offset 2048 && \
+    mcopy -s -i "$imgfile@@1M" "$DESTDIR"/* "$DESTDIR"/.alpine-release :: && \
+    echo "Compressing $imgfile..." && \
+    gzip -f -9 "$imgfile"
 
 # List the contents of our image directory
 # (should show our built image if everything worked)
