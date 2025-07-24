@@ -98,8 +98,10 @@ RUN	export DESTDIR=/tmp/pinewall && \
       mklabel msdos \
       mkpart primary fat32 1MiB ${boot_size}KiB \
       set 1 boot on \
+      set 1 lba on \
       mkpart primary ext4 ${boot_size}KiB 100% && \
-    mkfs.vfat -F 32 -n BOOT "$imgfile" --offset 2048 && \
+    mkfs.fat -F 32 -s 4 -n WOLFI "$imgfile" --offset 2048 && \
+    mkfs.ext4 ...
     mcopy -s -i "$imgfile@@1M" "$DESTDIR"/* "$DESTDIR"/.alpine-release :: && \
     echo "Compressing $imgfile..." && \
     gzip -f -9 "$imgfile"

@@ -6,3 +6,7 @@ ln -s /.modloop/modules /lib/modules
 depmod
 modprobe r8152 || true
 modprobe br_netfilter || true
+
+# Resize /dev/sda to max
+parted /dev/sda resizepart 2 100%
+resize2fs /dev/sda2
