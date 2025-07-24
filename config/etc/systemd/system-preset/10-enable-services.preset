@@ -7,3 +7,4 @@ enable load-modloop.service
 enable nftables.service
 enable node-exporter.service
 enable sshd.service
+enable tailscaled.service
