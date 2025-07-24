@@ -1,7 +1,7 @@
 # Define variables
 HOSTNAME := $(shell cat ./config/etc/hostname)
 IMAGE_FILE := mmcblk0-$(HOSTNAME).img.gz
-DEVICE = /dev/disk6
+DEVICE = /dev/disk4
 
 # Build target
 .PHONY: build
@@ -19,7 +19,7 @@ flash:
 
 .PHONY: liveflash
 liveflash:
-	cat $(IMAGE_FILE) | ssh pinewall@$(HOSTNAME) 'gunzip -c | sudo dd of=/dev/mmcblk0 bs=1048576 conv=fsync'
+	cat $(IMAGE_FILE) | ssh pinewall@$(HOSTNAME) 'gunzip -c | sudo dd of=/dev/sda bs=1M conv=fsync'
 
 # Clean target
 .PHONY: clean

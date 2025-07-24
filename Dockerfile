@@ -23,6 +23,7 @@ RUN apk add \
   bash \
   parted \
   e2fsprogs \
+  e2fsprogs-extra \
   doas
 
 RUN wget -O /etc/apk/keys/wolfi-signing.rsa.pub https://packages.wolfi.dev/os/wolfi-signing.rsa.pub
@@ -90,20 +91,26 @@ RUN	export DESTDIR=/tmp/pinewall && \
     export OUTDIR=/tmp/images && \
     output_filename="mmcblk0-$(cat /tmp/config/etc/hostname).img.gz" && \
     sync "$DESTDIR" && \
-    boot_size=$(du -L -k -s "$DESTDIR" | awk '{print $1 + 8192}' ) && \
-    ext4_mb=100 && \
+    boot_size=$(du -L -m -s "$DESTDIR" | awk '{print $1 + 8}' ) && \
+    ext4_size=100 && \
     imgfile="${OUTDIR}/${output_filename%.gz}" && \
-    dd if=/dev/zero of="$imgfile" bs=1M count=$(( $boot_size / 1024 + $ext4_mb )) && \
+    dd if=/dev/zero of="$imgfile" bs=1M count=$(( $boot_size + $ext4_size )) && \
     parted "$imgfile" --script -- \
       mklabel msdos \
-      mkpart primary fat32 1MiB ${boot_size}KiB \
+      mkpart primary fat32 1MiB ${boot_size}MiB \
       set 1 boot on \
       set 1 lba on \
-      mkpart primary ext4 ${boot_size}KiB 100% && \
+      mkpart primary ext4 ${boot_size}MiB 100% && \
     mkfs.fat -F 32 -s 4 -n WOLFI "$imgfile" --offset 2048 && \
-    mkfs.ext4 ...
+    dd if=/dev/zero of="${imgfile}.ext4" bs=1M count=$(( $ext4_size )) && \
+    mkfs.ext4 "$imgfile.ext4" && \
+    tune2fs -c0 -i0 "$imgfile.ext4" && \
     mcopy -s -i "$imgfile@@1M" "$DESTDIR"/* "$DESTDIR"/.alpine-release :: && \
+    dd if="${imgfile}.ext4" of="$imgfile" bs=1M seek="$boot_size" conv=notrunc && \
+    rm "${imgfile}.ext4" && \
     echo "Compressing $imgfile..." && \
+    parted "$imgfile" unit mib print && \
+    echo "boot_size=$boot_size ext4_size=$ext4_size" && \
     gzip -f -9 "$imgfile"
 
 # List the contents of our image directory

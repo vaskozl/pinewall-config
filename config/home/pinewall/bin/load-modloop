@@ -7,6 +7,12 @@ depmod
 modprobe r8152 || true
 modprobe br_netfilter || true
 
-# Resize /dev/sda to max
-parted /dev/sda resizepart 2 100%
-resize2fs /dev/sda2
+MARKER_FILE="/var/lib/.resize_done"
+if [ ! -f "$MARKER_FILE" ]; then
+    echo "Resizing partition and filesystem..."
+
+    parted /dev/sda resizepart 2 100% --script
+    resize2fs /dev/sda2
+
+    touch "$MARKER_FILE"
+fi
