@@ -82,6 +82,7 @@ table ip global {
         # internal nets are allowed
         iifname $DEV_PRIVATE accept
         iifname $DEV_WG accept
+        iifname $DEV_TAIL accept
 
         # Guest is only allowed internet accesss
         iifname $DEV_GUEST oifname $DEV_WORLD accept
