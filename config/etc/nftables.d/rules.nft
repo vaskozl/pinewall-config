@@ -13,7 +13,10 @@ define NET_PODCIDR = 10.244.0.0/16
 define NET_CGNAT = 100.64.0.0/10
 
 define IP_SYNO = 192.168.1.108
-define IP_KAPI = 192.168.1.8
+
+define IP_MAIL = 100.96.0.15
+define IP_EXTE = 100.82.97.172
+define IP_INTE = 100.106.35.150
 
 define SMART_SPEAKERS = {
     192.168.107.10, # Google Living
@@ -115,12 +118,12 @@ table ip nat {
         type nat hook prerouting priority 0;
         fib daddr type local dnat ip to meta l4proto . th dport map {
             # maddy
-            tcp . smtp  : $IP_KAPI . smtp,
+            tcp . smtp  : $IP_MAIL . smtp,
             # haproxy ingress
-            tcp . http  : $IP_KAPI . http,
-            tcp . https : $IP_KAPI . https,
-            udp . http  : $IP_KAPI . http,
-            udp . https : $IP_KAPI . https,
+            tcp . http  : $IP_EXTI . http,
+            tcp . https : $IP_EXTI . https,
+            udp . http  : $IP_EXTI . http,
+            udp . https : $IP_EXTI . https,
             # qbittorrent
             tcp . 16989 : $IP_SYNO . 16989,
             udp . 16989 : $IP_SYNO . 16989,
