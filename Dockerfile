@@ -45,13 +45,17 @@ RUN abuild-keygen -a -n
 RUN mkdir /tmp/abuild
 WORKDIR /tmp/abuild
 
-COPY aports /tmp/abuild/aports
+# Clone the aports repo for our specific branch
+# If building from Alpine Edge, we need to use the master branch
+RUN git clone --depth 1 --branch master https://gitlab.alpinelinux.org/alpine/aports.git
 
 # Add our custom profile into the abuild scripts directory
-COPY mkimg.pinewall_rpi.sh /tmp/abuild/aports/scripts/
+COPY mkimg.zz-pinewall_rpi.sh /tmp/abuild/aports/scripts/
 COPY genapkovl-pinewall.sh /tmp/abuild/aports/scripts/
-COPY update-kernel /usr/sbin/update-kernel
+
+# Build our own init into initramfs
 COPY init /tmp/custom-init
+RUN doas sed -i 's!MKINITFS_ARGS=!MKINITFS_ARGS=" -i /tmp/custom-init"!' /usr/sbin/update-kernel
 
 # Enter the script directory
 WORKDIR /tmp/abuild/aports/scripts
@@ -69,8 +73,6 @@ RUN bash -x ./mkimage.sh \
   --outdir /tmp/images \
   --workdir /tmp/cache \
   --repository https://uk.alpinelinux.org/alpine/edge/main \
-  --repository https://uk.alpinelinux.org/alpine/edge/community \
-  --repository https://packages.wolfi.dev/os \
   --profile pinewall_rpi
 
 # List the contents of our image directory
