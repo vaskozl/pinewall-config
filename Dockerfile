@@ -48,12 +48,18 @@ RUN abuild-keygen -a -n
 RUN mkdir /tmp/abuild
 WORKDIR /tmp/abuild
 
-COPY aports /tmp/abuild/aports
+# Clone the aports repo for our specific branch
+# If building from Alpine Edge, we need to use the master branch
+RUN git clone --depth 1 --branch master https://gitlab.alpinelinux.org/alpine/aports.git
 
 # Add our custom profile into the abuild scripts directory
-COPY mkimg.pinewall_rpi.sh /tmp/abuild/aports/scripts/
-COPY update-kernel /usr/sbin/update-kernel
+COPY mkimg.zz-pinewall_rpi.sh /tmp/abuild/aports/scripts/
+COPY genapkovl-pinewall.sh /tmp/abuild/aports/scripts/
+
+# Build our own init into initramfs
 COPY init /tmp/custom-init
+RUN doas sed -i 's!MKINITFS_ARGS=!MKINITFS_ARGS=" -i /tmp/custom-init"!' /usr/sbin/update-kernel
+RUN cat /usr/sbin/update-kernel
 
 # Enter the script directory
 WORKDIR /tmp/abuild/aports/scripts
@@ -62,8 +68,7 @@ WORKDIR /tmp/abuild/aports/scripts
 RUN mkdir /tmp/images
 
 # Add in all our configs
-RUN mkdir -p /tmp/config/etc/apk
-COPY config/etc/apk/world /tmp/config/etc/apk/world
+COPY config/. /tmp/config
 COPY secrets.env /tmp/
 
 # Build our image
@@ -72,46 +77,7 @@ RUN bash -x ./mkimage.sh \
   --outdir /tmp/images \
   --workdir /tmp/cache \
   --repository https://uk.alpinelinux.org/alpine/edge/main \
-  --repository https://uk.alpinelinux.org/alpine/edge/community \
-  --repository https://packages.wolfi.dev/os \
-  --profile pinewall_rpi && \
-  mkdir -p /tmp/pinewall && \
-  doas tar xvf /tmp/images/alpine-*tar.gz --no-same-owner -C /tmp/pinewall && \
-  rm /tmp/images/alpine-*.tar.gz && rm -rf /tmp/cache
-
-USER root
-
-COPY config/. /tmp/config
-
-COPY genapkovl-pinewall.sh /tmp/abuild/aports/scripts/
-RUN cd /tmp/pinewall && \
-  sh -x /tmp/abuild/aports/scripts/genapkovl-pinewall.sh
-
-RUN	export DESTDIR=/tmp/pinewall && \
-    export OUTDIR=/tmp/images && \
-    output_filename="mmcblk0-$(cat /tmp/config/etc/hostname).img.gz" && \
-    sync "$DESTDIR" && \
-    boot_size=$(du -L -m -s "$DESTDIR" | awk '{print $1 + 8}' ) && \
-    ext4_size=100 && \
-    imgfile="${OUTDIR}/${output_filename%.gz}" && \
-    dd if=/dev/zero of="$imgfile" bs=1M count=$(( $boot_size + $ext4_size )) && \
-    parted "$imgfile" --script -- \
-      mklabel msdos \
-      mkpart primary fat32 1MiB ${boot_size}MiB \
-      set 1 boot on \
-      set 1 lba on \
-      mkpart primary ext4 ${boot_size}MiB 100% && \
-    mkfs.fat -F 32 -s 4 -n WOLFI "$imgfile" --offset 2048 && \
-    dd if=/dev/zero of="${imgfile}.ext4" bs=1M count=$(( $ext4_size )) && \
-    mkfs.ext4 "$imgfile.ext4" && \
-    tune2fs -c0 -i0 "$imgfile.ext4" && \
-    mcopy -s -i "$imgfile@@1M" "$DESTDIR"/* "$DESTDIR"/.alpine-release :: && \
-    dd if="${imgfile}.ext4" of="$imgfile" bs=1M seek="$boot_size" conv=notrunc && \
-    rm "${imgfile}.ext4" && \
-    echo "Compressing $imgfile..." && \
-    parted "$imgfile" unit mib print && \
-    echo "boot_size=$boot_size ext4_size=$ext4_size" && \
-    gzip -f -9 "$imgfile"
+  --profile pinewall_rpi
 
 # List the contents of our image directory
 # (should show our built image if everything worked)

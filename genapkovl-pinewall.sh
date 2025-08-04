@@ -1,4 +1,4 @@
-#!/usr/bin/sh
+#!/usr/bin/doas sh
 set -xeu
 
 cleanup() {
