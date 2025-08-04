@@ -16,5 +16,5 @@ if [ -n "$IRQ1" ]; then
 fi
 
 if [ -n "$IRQ2" ]; then
-    echo 4 > /proc/irq/$IRQ2/smp_affinity  # Assign to CPU2
+    echo 2 > /proc/irq/$IRQ2/smp_affinity  # Assign to CPU1
 fi
