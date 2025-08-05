@@ -10,7 +10,7 @@ profile_pinewall_rpi() {
   # We don't want the kernel addons from the Standard profile, which includes
   # xtables-addons. We don't want any *tables stuff since we're fully nftables.
   kernel_addons=""
-  kernel_cmdline="console=tty1 net.ifnames=0 cgroup_enable=memory"
+  kernel_cmdline="console=tty1 net.ifnames=0 cgroup_enable=memory genet.eee=N"
 
   apks=$(cat /tmp/config/etc/apk/world)
 }
