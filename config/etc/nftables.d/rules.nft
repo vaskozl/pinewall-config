@@ -135,6 +135,7 @@ table ip nat {
 
         # masquerade outgoing connections
         ip saddr $NET_PRIVATE oifname $DEV_WORLD masquerade
+        iifname $DEV_TAIL oifname $DEV_WORLD masquerade
         oifname $DEV_TAIL masquerade
         # masquerade hairpinned connections
         ip saddr $NET_PRIVATE ip daddr $NET_PRIVATE ct status dnat masquerade
