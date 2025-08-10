@@ -3,3 +3,7 @@ Name=eth1
 
 [Network]
 DHCP=yes
+
+[DHCPv6]
+PrefixDelegationHint=::/56
+WithoutRA=solicit
