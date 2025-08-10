@@ -1,4 +1,4 @@
-FROM docker.io/library/alpine:edge AS builder
+FROM docker.io/library/alpine:3.20 AS builder
 
 # Run an APK update so we have a recent cache ready in the Docker image
 # (if we don't do this then the "apk fetch" stages of the build that fetch
@@ -47,7 +47,7 @@ WORKDIR /tmp/abuild
 
 # Clone the aports repo for our specific branch
 # If building from Alpine Edge, we need to use the master branch
-RUN git clone --depth 1 --branch master https://gitlab.alpinelinux.org/alpine/aports.git
+RUN git clone --depth 1 --branch 3.20-stable https://gitlab.alpinelinux.org/alpine/aports.git
 
 # Add our custom profile into the abuild scripts directory
 COPY mkimg.zz-pinewall_rpi.sh /tmp/abuild/aports/scripts/
@@ -55,7 +55,7 @@ COPY genapkovl-pinewall.sh /tmp/abuild/aports/scripts/
 
 # Build our own init into initramfs
 COPY init /tmp/custom-init
-RUN doas sed -i 's!MKINITFS_ARGS=!MKINITFS_ARGS=" -i /tmp/custom-init"!' /usr/sbin/update-kernel
+RUN doas sed -i 's!MKINITFS_ARGS=!MKINITFS_ARGS=" -i /tmp/custom-init"!' /sbin/update-kernel
 
 # Enter the script directory
 WORKDIR /tmp/abuild/aports/scripts
@@ -72,7 +72,7 @@ RUN bash -x ./mkimage.sh \
   --tag edge \
   --outdir /tmp/images \
   --workdir /tmp/cache \
-  --repository https://uk.alpinelinux.org/alpine/edge/main \
+  --repository https://uk.alpinelinux.org/alpine/v3.20/main \
   --profile pinewall_rpi
 
 # List the contents of our image directory
