@@ -9,10 +9,6 @@ VLAN=guest
 VLAN=iot
 VLAN=wireguard
 
-[IPv6SendRA]
-Managed=false
-OtherInformation=true
-
 [Route]
 Destination=10.244.5.0/24
 Gateway=192.168.1.30
@@ -40,3 +36,7 @@ Gateway=192.168.1.35
 [Route]
 Destination=10.244.3.0/24
 Gateway=192.168.1.41
+
+[IPv6SendRA]
+Managed=false
+OtherInformation=true

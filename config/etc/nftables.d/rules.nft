@@ -36,10 +36,19 @@ define IOT_WITH_EGRESS = {
     192.168.107.33, # Bosch-Dishwasher
 }
 
-table ip global {
+table inet global {
     chain inbound_world {
         # accepting ping (icmp-echo-request) for diagnostic purposes.
         icmp type echo-request limit rate 5/second accept
+        icmpv6 type echo-request limit rate 5/second accept
+
+        # Allow DHCPv6
+        udp dport 546 udp sport 547 accept
+        icmpv6 type { destination-unreachable, ind-neighbor-advert, ind-neighbor-solicit,
+            mld-listener-query, mld-listener-reduction, mld-listener-report,
+            mld2-listener-report, nd-neighbor-advert, nd-neighbor-solicit,
+            nd-router-advert, nd-router-solicit, packet-too-big,
+            parameter-problem, time-exceeded } accept comment "Permit required ICMPv6 types without rate limit"
 
         ip protocol . th dport vmap {
             udp . 51820 : accept, # wireguard
@@ -81,6 +90,12 @@ table ip global {
     chain forward {
         type filter hook forward priority 0; policy drop;
 
+        # Allow traffic from established and related packets, drop invalid
+        ct state vmap { established : accept, related : accept, invalid : drop }
+
+        # Accept everything that came through destination nat
+        ct status dnat accept
+
         # connections from the internal net to the internet or to other
         # internal nets are allowed
         iifname $DEV_PRIVATE accept
@@ -102,12 +117,6 @@ table ip global {
 
         # IOT devices don't have internet by default but some need it
         ip saddr $IOT_WITH_EGRESS oifname $DEV_WORLD accept
-
-        # Allow traffic from established and related packets, drop invalid
-        ct state vmap { established : accept, related : accept, invalid : drop }
-
-        # Accept everything that came through destination nat
-        ct status dnat accept
 
         # the rest is dropped by the default policy
     }
