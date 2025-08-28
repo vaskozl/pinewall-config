@@ -3,7 +3,6 @@ flush ruleset
 
 define DEV_PRIVATE = eth0
 define DEV_WORLD = eth1
-define DEV_WG = wg0
 define DEV_GUEST = guest
 define DEV_IOT = iot
 define DEV_TAIL = tailscale0
@@ -77,7 +76,6 @@ table inet global {
         iifname vmap {
             lo           : accept,
             $DEV_PRIVATE : accept,
-            $DEV_WG      : accept,
             $DEV_TAIL    : accept,
             $DEV_IOT     : jump inbound_guest,
             $DEV_GUEST   : jump inbound_guest,
@@ -99,7 +97,6 @@ table inet global {
         # connections from the internal net to the internet or to other
         # internal nets are allowed
         iifname $DEV_PRIVATE accept
-        iifname $DEV_WG accept
         iifname $DEV_TAIL accept
 
         # Guest is only allowed internet accesss
