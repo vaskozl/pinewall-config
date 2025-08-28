@@ -24,6 +24,7 @@ RUN apk add \
   doas
 
 RUN wget -O /etc/apk/keys/wolfi-signing.rsa.pub https://packages.wolfi.dev/os/wolfi-signing.rsa.pub
+RUN wget -O /etc/apk/keys/melange.rsa.pub https://apks.sko.ai/melange.rsa.pub
 
 # Add unprivileged builder user and change ownership of build directory
 # so we can launch the mkimage process unprivileged

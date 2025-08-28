@@ -30,7 +30,6 @@ echo "pinewall:x:5000:5000:Pinewall MGMT user:/home/pinewall:/bin/ash" >> "$tmp"
 
 . /tmp/secrets.env
 echo "$SHADOW_USER" >> "$tmp"/etc/shadow
-envsubst < /tmp/config/etc/systemd/network/30-wireguard.netdev > "$tmp"/etc/systemd/network/30-wireguard.netdev
 
 # Wrap up our custom /etc and /home into an APK overlay file
 tar -c -C "$tmp" etc home var | gzip -9n > pinewall.apkovl.tar.gz

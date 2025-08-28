@@ -22,7 +22,9 @@ build_apks() {
     mkdir -p "$_archdir"
 
     wget -O "$APKROOT"/etc/apk/keys/wolfi-signing.rsa.pub https://packages.wolfi.dev/os/wolfi-signing.rsa.pub
+    wget -O "$APKROOT"/etc/apk/keys/melange.rsa.pub https://apks.sko.ai/melange.rsa.pub
     echo "https://packages.wolfi.dev/os" > "$APKROOT"/etc/apk/repositories
+    echo "https://apks.sko.ai" >> "$APKROOT"/etc/apk/repositories
 
     apk update --root "$APKROOT" update
     apk fetch --root "$APKROOT" --link --recursive --output "$_archdir" $apks
