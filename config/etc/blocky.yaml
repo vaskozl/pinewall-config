@@ -14,7 +14,6 @@ blocking:
     hagezi:
       - https://raw.githubusercontent.com/hagezi/dns-blocklists/main/wildcard/pro.txt
       - https://raw.githubusercontent.com/hagezi/dns-blocklists/main/wildcard/tif.medium.txt
-      - https://raw.githubusercontent.com/hagezi/dns-blocklists/main/wildcard/doh.txt
   clientGroupsBlock:
     default:
       - hagezi
