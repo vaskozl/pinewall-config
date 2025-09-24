@@ -5,7 +5,7 @@ Name=eth1
 DHCP=yes
 IPv4Forwarding=yes
 IPv6Forwarding=yes
+IPv6AcceptRA=yes
 
 [DHCPv6]
 PrefixDelegationHint=::/56
-WithoutRA=solicit
