@@ -9,3 +9,4 @@ IPv6AcceptRA=yes
 
 [DHCPv6]
 PrefixDelegationHint=::/56
+WithoutRA=solicit
