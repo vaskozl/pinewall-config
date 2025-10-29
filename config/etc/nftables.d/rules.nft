@@ -52,6 +52,7 @@ table inet global {
         ip protocol . th dport vmap {
             udp . 51820 : accept, # wireguard
             udp . 41641 : accept, # tailscale
+            udp . 41642 : accept, # tailscale relay
         }
     }
 
