@@ -197,14 +197,13 @@ Comment out services you don't need.
 1. Fork or clone this repository
 2. Modify the configuration files
 3. Create `secrets.env` with your password hash
-4. Build and push the image:
+4. Build and create a bootstrap image:
    ```bash
    just build
-   just push
+   just image
    ```
-5. Create initial bootable disk image: `just image`
-6. Write to disk, e.g.: `dd if=bootable.img of=/dev/sdX bs=4M status=progress && sync`
-7. Boot your router from the disk
+5. Write to disk, e.g.: `dd if=bootable.img of=/dev/sdX bs=4M status=progress && sync`
+6. Boot your router from the disk
 
 ## Testing in a VM
 
