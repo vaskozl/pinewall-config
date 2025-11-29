@@ -1,5 +1,6 @@
 *.img.gz
 *.iso
+RPI_EFI.fd
 bootable.img
 config/var/lib/tailscale
 secrets.env

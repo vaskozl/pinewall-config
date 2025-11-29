@@ -45,12 +45,12 @@ The configuration files in this repository are tailored to a specific network. F
 
 **Define your network layout** in `config/etc/systemd/network/`:
 
-#### WAN Interface (`10-eth1.network`)
+#### WAN Interface (`10-enp1s0u2.network`)
 The external/internet-facing interface typically uses DHCP:
 
 ```ini
 [Match]
-Name=eth1  # Change to your WAN interface name
+Name=enp1s0u2  # Change to your WAN interface name
 
 [Network]
 DHCP=yes
@@ -83,7 +83,7 @@ Update the interface and network definitions at the top of the file to match you
 
 ```nft
 define DEV_PRIVATE = eth0         # Your LAN interface
-define DEV_WORLD = eth1           # Your WAN interface
+define DEV_WORLD = enp1s0u2           # Your WAN interface
 define NET_PRIVATE = 192.168.0.0/16   # Your private network range
 ```
 

@@ -2,7 +2,7 @@
 flush ruleset
 
 define DEV_PRIVATE = eth0
-define DEV_WORLD = eth1
+define DEV_WORLD = enp1s0u2
 define DEV_GUEST = guest
 define DEV_IOT = iot
 define DEV_TAIL = tailscale0
