@@ -1,18 +1,20 @@
-build:
-    podman build \
-        --secret id=env,src=secrets.env \
-        -t pinewall-bootc:latest .
-
-run *ARGS:
-    podman run \
-        --rm --privileged --pid=host \
+IMG := "bootable.img"
+PODMAN_OPTS := "--rm --privileged --pid=host \
         -it \
         -v /sys/fs/selinux:/sys/fs/selinux:Z \
         -v /etc/containers:/etc/containers \
         -v /var/lib/containers:/var/lib/containers \
         -v /dev:/dev \
         -v $PWD:/data \
-        --security-opt label=type:unconfined_t \
+        --security-opt label=type:unconfined_t"
+
+build:
+    podman build \
+        --secret id=env,src=secrets.env \
+        -t pinewall-bootc:latest .
+
+run *ARGS:
+    podman run {{PODMAN_OPTS}} \
         pinewall-bootc:latest {{ARGS}}
 
 bootc *ARGS:
@@ -20,10 +22,16 @@ bootc *ARGS:
 
 image:
     #!/usr/bin/env bash
-    if [ ! -e "./bootable.img" ] ; then
-        just run fallocate -l 20G /data/bootable.img
+    if [ ! -e "./{{IMG}}" ] ; then
+        just run fallocate -l 20G /data/{{IMG}}
     fi
     just bootc install to-disk --composefs-backend --via-loopback /data/bootable.img --filesystem ext4 --wipe --bootloader systemd
+    just add-rpi-uefi
+
+add-rpi-uefi:
+    podman run {{PODMAN_OPTS}} \
+    pinewall-bootc:latest \
+    sh -c 'set -eux; LOOPDEV=$(losetup --find --partscan --show /data/{{IMG}}); echo "Loop device: $LOOPDEV"; mkdir -p /mnt/boot; mount "${LOOPDEV}p1" /mnt/boot; cd /mnt/boot; curl -L -o RPi4_UEFI.zip https://github.com/pftf/RPi4/releases/download/v1.50/RPi4_UEFI_Firmware_v1.50.zip; unzip -o RPi4_UEFI.zip; rm RPi4_UEFI.zip; sync; cd /; umount /mnt/boot; losetup -d "$LOOPDEV";'
 
 push:
     just build
@@ -34,6 +42,6 @@ vfkit:
     vfkit \
     --cpus 2 --memory 2048 \
     --bootloader efi,variable-store=efi-variable-store,create \
-    --device virtio-blk,path=bootable.img \
+    --device virtio-blk,path={{IMG}} \
     --device virtio-serial,stdio \
     --device virtio-net,nat
