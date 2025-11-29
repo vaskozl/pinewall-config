@@ -2,6 +2,7 @@ disable systemd-resolved.service
 enable avahi-daemon.service
 enable blocky.service
 enable dnsmasq.service
+enable irq-affinity.service
 enable nftables.service
 enable node-exporter.service
 enable sshd.service

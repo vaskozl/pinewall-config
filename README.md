@@ -162,11 +162,7 @@ The default user is `pinewall` with sudo access configured in `config/etc/sudoer
 
 ### 6. SSH Access
 
-**Add your public key** to `config/home/pinewall/.ssh/authorized_keys`:
-
-```
-ssh-rsa AAAAB3NzaC1yc2E... your@email.com
-```
+**Add your public key** to `/home/pinewall/.ssh/authorized_keys` after first boot. `/var` is persisted.
 
 ### 7. System Tweaks
 
