@@ -4,7 +4,7 @@
 
 > Inspired by [Alex Haydock's original Alpine project](https://github.com/alexhaydock/pinewall)
 
-An immutable, declarative home router configuration built with bootc. All configuration is version-controlled and the entire system can be rebuilt from scratch at any time.
+An immutable, declarative home router configuration built with bootc and Chainguard's [wolfi linux](https://github.com/wolfi-dev/os). All software in the base image provided here is packaged, installed declaratively and compatible with security scanners.
 
 ## Features
 
