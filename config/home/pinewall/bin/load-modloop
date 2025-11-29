@@ -1,8 +1,0 @@
-#!/bin/sh
-sed -i '/^alpine-base$/d' /etc/apk/world
-mkdir -p /.modloop
-mount /media/*/boot/modloop-* -o loop,ro /.modloop
-ln -s /.modloop/modules /lib/modules
-depmod
-modprobe r8152 || true
-ethtool --set-eee eth1 eee off || true

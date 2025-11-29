@@ -1,4 +1,6 @@
-secrets.env
 *.img.gz
 *.iso
+bootable.img
 config/var/lib/tailscale
+secrets.env
+tmp

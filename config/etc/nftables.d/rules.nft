@@ -14,7 +14,7 @@ define NET_CGNAT = 100.64.0.0/10
 define IP_SYNO = 192.168.1.108
 
 define IP_MAIL = 100.96.0.15
-define IP_EXTI = 100.82.97.172
+define IP_EXTI = 100.74.162.53
 define IP_INTI = 100.106.35.150
 
 define SMART_SPEAKERS = {
