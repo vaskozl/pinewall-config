@@ -11,11 +11,11 @@ PODMAN_OPTS := "--rm --privileged --pid=host \
 build:
     podman build \
         --secret id=env,src=secrets.env \
-        -t pinewall-bootc:latest .
+        -t ghcr.io/vaskozl/pinewall-config:latest .
 
 run *ARGS:
     podman run {{PODMAN_OPTS}} \
-        pinewall-bootc:latest {{ARGS}}
+        ghcr.io/vaskozl/pinewall-config:latest {{ARGS}}
 
 bootc *ARGS:
     just run bootc {{ARGS}}
@@ -30,13 +30,12 @@ image:
 
 add-rpi-uefi:
     podman run {{PODMAN_OPTS}} \
-    pinewall-bootc:latest \
+    ghcr.io/vaskozl/pinewall-config:latest \
     sh -c 'set -eux; LOOPDEV=$(losetup --find --partscan --show /data/{{IMG}}); echo "Loop device: $LOOPDEV"; mkdir -p /mnt/boot; mount "${LOOPDEV}p1" /mnt/boot; cd /mnt/boot; curl -L -o RPi4_UEFI.zip https://github.com/pftf/RPi4/releases/download/v1.50/RPi4_UEFI_Firmware_v1.50.zip; unzip -o RPi4_UEFI.zip; rm RPi4_UEFI.zip; [ -f "/data/RPI_EFI.fd" ] && cp /data/RPI_EFI.fd /mnt/boot; sync; cd /; umount /mnt/boot; losetup -d "$LOOPDEV";'
 
 push:
     just build
-    podman tag localhost/pinewall-bootc ghcr.io/vaskozl/pinewall-bootc
-    podman push ghcr.io/vaskozl/pinewall-bootc
+    podman push ghcr.io/vaskozl/pinewall-config
 
 vfkit:
     vfkit \
