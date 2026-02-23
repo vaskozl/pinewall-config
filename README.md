@@ -1,24 +1,18 @@
 # pinewall-config
 
-**Immutable Wolfi Bootc Home Router Declared in Git**
-
 > Inspired by [Alex Haydock's original Alpine project](https://github.com/alexhaydock/pinewall)
 
 An immutable, declarative home router configuration built with bootc and Chainguard's [wolfi linux](https://github.com/wolfi-dev/os). All software in the base image provided here is packaged, installed declaratively and compatible with security scanners.
 
-## Features
+## Config & Container
 
-- **nftables** - Modern firewall and NAT with VLAN support
-- **dnsmasq** - DHCP server with static leases and DNS forwarding
-- **blocky** - DNS-based ad blocking with configurable blocklists
-- **BIRD** - BGP routing for Kubernetes integration
-- **Tailscale** - Secure mesh networking
-- **systemd-networkd** - Declarative network configuration with VLANs
-- **iperf3** - Local network performance testing
+The config itself is built in the CI of my packages repo. You can find the [melange apk spec here](https://github.com/vaskozl/wolfi-packages/blob/main/pinewall-config.yaml).
 
-## Quick Start
+The container which includes the config and all other depedencies is in my containers repo, the [apko container spec can be found here](https://github.com/vaskozl/containers/blob/main/pinewall-config.yaml).
 
-Build and deploy the bootable image:
+## Image Generation
+
+Right now the images built by `apko` are not directly compatible with `bootc` as such I use an empty `Dockerfile` to "fix" the image with podman.
 
 ```bash
 just build
@@ -27,15 +21,7 @@ cp bootable.img /dev/sdX  # Replace with your device
 sync
 ```
 
-The image includes Raspberry Pi 4 UEFI firmware by default.
-
-## Architecture
-
-Packages are defined declaratively with `apko` in the [base image](https://github.com/vaskozl/containers/blob/main/router.yaml), which extends a [bootc base image](https://github.com/vaskozl/containers/blob/main/bootc.yaml).
-
-Configuration files in `config/etc/` overlay the default package configurations, providing a fully customizable router setup that's version-controlled and reproducible.
-
----
+The `just image` command also installs Raspberry Pi 4 UEFI in the aarch64 firmware by default.
 
 ## Customizing for Your Network
 
@@ -43,7 +29,7 @@ The configuration files in this repository are tailored to a specific network. F
 
 ### 1. Network Topology
 
-**Define your network layout** in `config/etc/systemd/network/`:
+**Define your network layout** in `vendor/etc/systemd/network/`:
 
 #### WAN Interface (`10-enp1s0u2.network`)
 The external/internet-facing interface typically uses DHCP:
@@ -77,7 +63,7 @@ Customize the VLAN IDs and subnets for your needs.
 
 ### 2. Firewall Rules
 
-**Edit `config/etc/nftables.d/rules.nft`** to match your network:
+**Edit `vendor/etc/nftables.d/rules.nft`** to match your network:
 
 Update the interface and network definitions at the top of the file to match your setup:
 
@@ -91,7 +77,7 @@ The ruleset includes examples for VLANs, port forwarding, and device-specific ru
 
 ### 3. DHCP and DNS
 
-**Edit `config/etc/dnsmasq.conf`**:
+**Edit `vendor/etc/dnsmasq.conf`**:
 
 #### DHCP Ranges
 Configure IP ranges for each network:
@@ -118,13 +104,13 @@ server=/mydomain.local/192.168.1.10
 ```
 
 #### Static DHCP Leases
-**Edit `config/etc/ethers`** to assign fixed IPs by MAC address:
+**Edit `vendor/etc/ethers`** to assign fixed IPs by MAC address:
 
 ```
 aa:bb:cc:dd:ee:ff hostname.home.local
 ```
 
-**Edit `config/etc/hosts`** for DNS resolution:
+**Edit `vendor/etc/hosts`** for DNS resolution:
 
 ```
 192.168.1.100 hostname
@@ -132,7 +118,7 @@ aa:bb:cc:dd:ee:ff hostname.home.local
 
 ### 4. DNS Blocking
 
-**Edit `config/etc/blocky.yaml`** to configure ad/tracker blocking:
+**Edit `vendor/etc/blocky.yaml`** to configure ad/tracker blocking:
 
 ```yaml
 blocking:
@@ -146,35 +132,17 @@ blocking:
 
 Choose your preferred blocklists or disable blocking entirely by removing the `blocking` section.
 
-### 5. User Accounts
+### 5. System Tweaks
 
-**Create `secrets.env`** with your user password hash:
-
-```bash
-# Generate password hash
-openssl passwd -6 'yourpassword'
-
-# Add to secrets.env
-SHADOW_USER='pinewall:$6$your_hash_here:19000:0:99999:7:::'
-```
-
-The default user is `pinewall` with sudo access configured in `config/etc/sudoers.d/pinewall`.
-
-### 6. SSH Access
-
-**Add your public key** to `/home/pinewall/.ssh/authorized_keys` after first boot. `/var` is persisted.
-
-### 7. System Tweaks
-
-**Edit `config/etc/sysctl.d/99-router.conf`** for kernel parameters:
+**Edit `vendor/etc/sysctl.d/99-router.conf`** for kernel parameters:
 
 - Already configured for IPv4/IPv6 forwarding
 - Conntrack tuning for high-traffic networks
 - Adjust `nf_conntrack_max` if you have many concurrent connections
 
-### 8. Services
+### 6. Services
 
-**Edit `config/etc/systemd/system-preset/10-enable-services.preset`** to control which services start on boot:
+**Edit `vendor/etc/systemd/system-preset/10-enable-services.preset`** to control which services start on boot:
 
 ```conf
 enable bird.service
@@ -190,16 +158,8 @@ Comment out services you don't need.
 
 ## Building Your Custom Router
 
-1. Fork or clone this repository
-2. Modify the configuration files
-3. Create `secrets.env` with your password hash
-4. Build and create a bootstrap image:
-   ```bash
-   just build
-   just image
-   ```
-5. Write to disk, e.g.: `dd if=bootable.img of=/dev/sdX bs=4M status=progress && sync`
-6. Boot your router from the disk
+While I build containers in packages in seperate repos, you can also do it in a single repo with a local repository.
+Check out [Alex Haydock's Justfile](https://github.com/alexhaydock/pinewall/blob/master/justfile) which does exactly that.
 
 ## Testing in a VM
 
@@ -211,42 +171,9 @@ just vfkit  # macOS with vfkit
 
 Or use your preferred VM tool with the `bootable.img` as the boot disk.
 
-## Updating
-
-Edit the Justfile to push your images to a custom registry. Following that you make use `just push` to push your very own
-custom bootc images.
-
-You can `bootc switch` to your image:
-
-```bash
-# One-time: switch to your custom image
-bootc switch ghcr.io/yourusername/pinewall-bootc
-
-# Future updates: make changes, rebuild, push, then:
-bootc update
-systemctl reboot
-```
-
-## Advanced Customization
-
-### Custom Base Image
-
-Modify the base image to add/remove packages by editing the upstream [router.yaml](https://github.com/vaskozl/containers/blob/main/router.yaml) or fork and reference your own in the `Dockerfile`.
-
-### Additional Services
-
-Add custom systemd services to `config/etc/systemd/system/` and enable them in the preset files.
-
-### Network Interfaces
-
-For additional interfaces, create corresponding `*.network` files in `config/etc/systemd/network/`.
-
----
-
 ## Troubleshooting
 
 - Check logs: `journalctl -f` after booting
 - Verify services: `systemctl status dnsmasq nftables blocky`
-- Test firewall: `nft list ruleset`
-- DNS resolution: `dig @localhost example.com`
+- List firewall rules: `nft list ruleset`
 - DHCP leases: `cat /var/lib/misc/dnsmasq.leases`
