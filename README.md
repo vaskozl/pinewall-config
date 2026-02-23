@@ -227,8 +227,6 @@ bootc update
 systemctl reboot
 ```
 
-The immutable design means every deployment is reproducible from git history.
-
 ## Advanced Customization
 
 ### Custom Base Image
