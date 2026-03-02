@@ -12,6 +12,7 @@ define NET_PODCIDR = 10.244.0.0/16
 define NET_CGNAT = 100.64.0.0/10
 
 define IP_SYNO = 192.168.1.108
+define IP_SYNO6 = 2a01:4b00:ae2f:1f00:9209:d0ff:fe00:ba23
 
 define IP_MAIL = 100.96.0.15
 define IP_EXTI = 100.74.162.53
@@ -111,6 +112,9 @@ table inet global {
 
         # IOT devices don't have internet by default but some need it
         ip saddr $IOT_WITH_EGRESS oifname $DEV_WORLD accept
+
+        ip6 daddr $IP_SYNO6 tcp dport 16989 accept
+        ip6 daddr $IP_SYNO6 udp dport 16989 accept
 
         # the rest is dropped by the default policy
     }
