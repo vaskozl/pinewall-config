@@ -4,6 +4,8 @@
 
 An immutable, declarative home router configuration built with bootc and Chainguard's [wolfi linux](https://github.com/wolfi-dev/os). All software in the base image provided here is packaged, installed declaratively and compatible with security scanners.
 
+For background on the design and how it fits with the rest of my bootc + Wolfi setup, see [Making Bootable Wolfi Containers](https://sko.ai/blog/making-bootable-wolfi-containers/).
+
 ## Config & Container
 
 The config itself is built in the CI of my packages repo. You can find the [melange apk spec here](https://github.com/vaskozl/wolfi-packages/blob/main/pinewall-config.yaml).
