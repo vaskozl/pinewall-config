@@ -22,7 +22,7 @@ bootc *ARGS:
 image:
     #!/usr/bin/env bash
     if [ ! -e "./{{IMG}}" ] ; then
-        just run fallocate -l 20G /data/{{IMG}}
+        just run fallocate -l 4G /data/{{IMG}}
     fi
     just bootc install to-disk --composefs-backend --via-loopback /data/bootable.img --filesystem ext4 --wipe --bootloader systemd
     just add-rpi-uefi
