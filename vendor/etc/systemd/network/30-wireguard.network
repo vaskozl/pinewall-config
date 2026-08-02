@@ -2,4 +2,5 @@
 Name=wg0
 
 [Network]
-Address=192.168.7.1/24
+Address=192.168.7.254/24
+Address=fdcc:ad94:bacf:61a4::cafe:254/64

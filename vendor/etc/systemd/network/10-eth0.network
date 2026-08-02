@@ -9,7 +9,6 @@ IPv6Forwarding=yes
 IPv6SendRA=yes
 VLAN=guest
 VLAN=iot
-VLAN=wireguard
 
 [IPv6SendRA]
 Managed=false
